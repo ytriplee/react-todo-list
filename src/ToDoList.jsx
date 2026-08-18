@@ -108,7 +108,7 @@ function ToDoList(){
 
     return(
         <div>
-            <h2>My React To-Do-List App</h2>
+            <h2>My To-Do-List App</h2>
 
             <form onSubmit={addTask}>
                 <input  type="text" value={newTask} 
