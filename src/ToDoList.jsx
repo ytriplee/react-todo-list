@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import TaskItem from "./TaskItem";
+import TaskSummary from "./TasksSummary";
 
 function ToDoList(){
 
@@ -133,7 +134,7 @@ function ToDoList(){
                                                                                                        
             </ul>
             {message}
-            <h3>Number of Tasks: {filteredTasks.length}</h3>
+            <TaskSummary tasks={tasks} />
         </div>
     );
 

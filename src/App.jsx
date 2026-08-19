@@ -1,12 +1,10 @@
 import ToDoList from "./ToDoList";
-import Feedback from "./Feedback";
 
 function App(){
 
     return(
         <>
             <ToDoList />
-            <Feedback />
         </>
     );
 }
