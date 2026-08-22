@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import TaskItem from "./TaskItem";
 import TaskSummary from "./TasksSummary";
 
@@ -18,6 +18,9 @@ function ToDoList(){
                 });
     const [newTask, setNewTask] = useState("");
     const [filter, setFilter] = useState("all");
+    const [editingNameId, setEditingNameId] = useState(null);
+    const [editName, setEditName] = useState("");
+    const [editError, setEditError] = useState("");
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -62,6 +65,40 @@ function ToDoList(){
             }
             return task;
         }))
+    }
+
+    function startEdit(task){
+
+        setEditingNameId(task.id);
+        setEditName(task.name);
+    }
+
+    function saveEdit(e){
+
+        e.preventDefault();
+
+        if(editName.trim() === ""){
+            setEditError("Input cannot be empty");
+            return;
+        }
+        if(editName.trim().length < 3){
+            setEditError("Input must be at least 3 characters");
+            return;
+        }
+
+        setTasks(t =>
+            t.map(task => {
+                if(task.id === editingNameId){
+                    return {
+                        ...task, name: editName.trim(),
+                    }
+                }
+                return task;
+            })
+        );
+        setEditingNameId(null);
+        setEditError("");
+        setEditName("");
     }
 
     function addTask(e){
@@ -123,14 +160,28 @@ function ToDoList(){
             <button onClick={() => setFilter("pending")}>Pending</button>
             <button onClick={() => setFilter("completed")}>Completed</button>
             <ul>
-                {filteredTasks.length === 0 ? (<h3>{message}</h3>) : 
+                {filteredTasks.length === 0 ? (<li>{message}</li>) : 
                                             (filteredTasks.map(task => 
+                                                task.id === editingNameId ? (
+                                                <Fragment key={task.id}>
+                                                    <form onSubmit={saveEdit}>
+                                                        <input  type="text" 
+                                                                value={editName}
+                                                                onChange={(e) => {setEditName(e.target.value); setEditError("");}}
+                                                        />
+                                                        <button type="submit">Save</button>
+                                                        <button type="button" onClick={() => setEditingNameId(null)}>Cancel</button>
+                                                    </form>
+                                                    {editError && <p>{editError}</p>}
+                                                </Fragment>
+                                                ):
                                                 (<TaskItem  key={task.id}
                                                             task={task} 
                                                             toggleStatus={toggleStatus}
                                                             moveTaskDown={moveTaskDown} 
                                                             removeTask={removeTask}
-                                                            moveTaskUp={moveTaskUp} />)))}
+                                                            moveTaskUp={moveTaskUp}
+                                                            startEdit={startEdit} />)))}
                                                                                                        
             </ul>
             {message}
